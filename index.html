@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portafolio y CV interactivo de Angel Abraham Carrillo Garza, desarrollador web y diseñador gráfico.">
+    <title>Angel Carrillo | Desarrollador Web & Diseñador</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="imagenes/apple-touch-icon.png">
+
+<link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="imagenes/favicon-16x16.png">
+
+<link rel="manifest" href="imagenes/site.webmanifest">
+
+<link rel="shortcut icon" href="imagenes/favicon.ico"> 
+
+<meta name="theme-color" content="#1a1a1a">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        /* ================================================= */
+        /* === 1. VARIABLES DE TEMA (CLARO: AZUL/BLANCO, OSCURO: ROJO/NEGRO) === */
+        /* ================================================= */
+
+        /* Tema Oscuro (DEFAULT) */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0d1117 0%, #170d0d 50%, #200f0f 100%);
+            --bg: #0d1117;
+            --card: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --secondary-text: #8b949e;
+            --accent: #39ff14; /* VERDE NEÓN */
+            --accent-hover: #6bff6b;
+            --success: #2ea043;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+            --font-main: 'Inter', sans-serif;
+            --toggle-bg: #e74c3c;
+            --toggle-text: white;
+            --text-background: rgba(13, 17, 23, 0.9);
+            --name-color: white;
+            --social-icon: #e6edf3;
+            --card-rgba: 22, 27, 34; /* Para el efecto glass */
+            --expo-in: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+        }
+
+        /* Tema Claro (REQUISITO: Azul/Blanco) */
+        body.light-mode {
+            --bg-gradient: linear-gradient(135deg, #f6f8fa 0%, #e0e7ee 50%, #cce3f5 100%);
+            --bg: #f6f8fa;
+            --card: #ffffff;
+            --border: #d0d7de;
+            --text: #24292f;
+            --secondary-text: #57606a;
+            --accent: #00b8e6; /* AZUL NEÓN OSCURO */
+            --accent-hover: #33ccff;
+            --success: #2c974b;
+            --shadow: 0 1px 3px rgba(27, 31, 35, 0.15);
+            --toggle-bg: #0969da;
+            --toggle-text: white;
+            --text-background: rgba(246, 248, 250, 0.9);
+            --name-color: black;
+            --social-icon: #24292f;
+            --card-rgba: 255, 255, 255; /* Para el efecto glass */
+        }
+
+        /* ================================================= */
+        /* === 2. ESTILOS BASE Y JUEGO === */
+        /* ================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font-main);
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s, padding-left 0.3s ease;
+            overflow-x: hidden;
+            position: relative;
+            padding-left: 60px; /* Espacio para el nuevo menú lateral colapsado */
+        }
+
+        #zombie-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: transparent;
+            border: none;
+            touch-action: none;
+        }
+
+        .game-container {
+            width: 100%;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        header, main, footer {
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: center; /* Centrado para el contenido del banner */
+            align-items: center; /* Centrado para el contenido del banner */
+            text-align: center; /* Centrado para el contenido del banner */
+            padding: 4rem 2rem; /* Más padding para un look de banner */
+            box-shadow: var(--shadow);
+            flex-direction: column;
+            /* Estilos de fondo */
+            background-color: var(--bg);
+            background-image: url('imagenes/imagesbanner-dark.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        body.light-mode header {
+            background-image: url('imagenes/imagesbanner-light.png');
+        }
+
+        .header-info {
+            max-width: 100%;
+            flex-grow: 1;
+            text-align: center;
+            order: 2;
+            width: 100%;
+            background-color: rgba(var(--card-rgba), 0.5); /* Fondo semitransparente para legibilidad */
+            backdrop-filter: blur(5px);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        header h1 {
+            margin: 0 0 0.2rem;
+            font-size: 2rem;
+            color: var(--name-color);
+            font-weight: 700;
+        }
+
+        /* === ESTILO NEÓN AÑADIDO === */
+        .neon-text {
+            color: var(--text); /* Color base del texto */
+            text-shadow: 
+                0 0 7px var(--accent),
+                0 0 10px var(--accent),
+                0 0 21px var(--accent),
+                0 0 42px var(--accent-hover),
+                0 0 82px var(--accent-hover),
+                0 0 92px var(--accent-hover);
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+                text-shadow: 
+                    0 0 7px var(--accent),
+                    0 0 10px var(--accent),
+                    0 0 21px var(--accent);
+            }
+            20%, 24%, 55% {        
+                opacity: 0.7;
+                text-shadow: none;
+            }
+        }
+        /* === FIN ESTILO NEÓN === */
+
+        /* === ESTILO NEÓN AÑADIDO === */
+        .neon-text {
+            color: var(--text); /* Color base del texto */
+            text-shadow: 
+                0 0 7px var(--accent),
+                0 0 10px var(--accent),
+                0 0 21px var(--accent),
+                0 0 42px var(--accent-hover),
+                0 0 82px var(--accent-hover),
+                0 0 92px var(--accent-hover);
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+                text-shadow: 
+                    0 0 7px var(--accent),
+                    0 0 10px var(--accent),
+                    0 0 21px var(--accent);
+            }
+            20%, 24%, 55% {        
+                opacity: 0.7;
+                text-shadow: none;
+            }
+        }
+        /* === FIN ESTILO NEÓN === */
+
+        /* === ESTILO NEÓN AÑADIDO === */
+        .neon-text {
+            color: var(--text); /* Color base del texto */
+            text-shadow: 
+                0 0 7px var(--accent),
+                0 0 10px var(--accent),
+                0 0 21px var(--accent),
+                0 0 42px var(--accent-hover),
+                0 0 82px var(--accent-hover),
+                0 0 92px var(--accent-hover);
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+                text-shadow: 
+                    0 0 7px var(--accent),
+                    0 0 10px var(--accent),
+                    0 0 21px var(--accent);
+            }
+            20%, 24%, 55% {        
+                opacity: 0.7;
+                text-shadow: none;
+            }
+        }
+        /* === FIN ESTILO NEÓN === */
+
+        header p {
+            color: var(--secondary-text);
+            margin: 0.3rem 0 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+            nav a {
+                text-decoration: none;
+                color: var(--text);
+                background-color: var(--card);
+                border: 1px solid var(--border);
+                padding: 0.5rem 1rem;
+                border-radius: 6px;
+                font-weight: 500;
+                transition: background-color 0.2s ease, transform 0.1s ease;
+                scroll-behavior: smooth;
+            }
+
+                nav a:hover {
+                    background-color: var(--border);
+                    transform: scale(1.02);
+                    color: var(--accent-hover);
+                }
+
+        /* Estilos para el contenedor del botón de tema. Se mantiene simple para posicionamiento. */
+        .theme-toggle-container {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Estilos base para el botón de tema (#theme-toggle). Aplica por defecto en Tema Oscuro. */
+        #theme-toggle {
+            /* Dimensiones y forma circular */
+            width: 48px; 
+            height: 48px; 
+            border-radius: 50%;
+            /* Interacción */
+            cursor: pointer;
+            font-size: 1.4rem; /* Tamaño del ícono Sol/Luna */
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            transition: all 0.3s ease; /* Transición suave */
+            line-height: 0;
+
+            /* Estética Tema Oscuro (Glow Verde Neón) */
+            background-color: var(--card); 
+            color: var(--accent); 
+            border: 3px solid var(--accent); /* Borde con Verde Neón */
+            box-shadow: 
+                0 0 10px var(--accent), 
+                0 0 20px var(--accent), 
+                0 0 30px rgba(var(--card-rgba), 0.7); /* Efecto de glow neon */
+        }
+
+        /* Oculta las etiquetas de texto dentro del botón de tema */
+        #theme-toggle span {
+            display: none !important;
+        }
+
+        /* Estilos para el hover del botón de tema. Aplica en ambos temas. */
+        #theme-toggle:hover {
+            transform: scale(1.1); /* Aumenta ligeramente el tamaño */
+            border-color: var(--accent-hover);
+            box-shadow: 
+                0 0 15px var(--accent-hover), 
+                0 0 30px var(--accent-hover), 
+                0 0 40px var(--accent); /* Intensifica el glow */
+        }
+
+        /* Estilos específicos para el botón de tema en modo claro (body.light-mode). */
+        body.light-mode #theme-toggle {
+            /* Estética Tema Claro (Glow Azul Neón - Más sutil) */
+            border: 3px solid var(--accent); /* Borde con Azul Neón */
+            box-shadow: 
+                0 0 5px var(--accent), 
+                0 0 10px var(--accent); /* Glow más sutil para evitar saturación en fondo claro */
+        }
+
+        /* Ocultar el span que corresponde al modo actual (se mantiene para funcionalidad) */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Bloque Adicional para forzar visibilidad y color del ícono */
+        #theme-toggle i {
+            font-size: 1.4rem; /* Asegura un tamaño visible */
+            color: var(--text); /* Fuerza el color a la variable de texto del tema */
+            line-height: 1; /* Para ayudar a la alineación */
+        }
+
+        /* Y asegurémonos de que el ícono de Font Awesome de tema oscuro esté visible por defecto */
+        #theme-toggle .fa-moon {
+            display: block !important;
+        }
+
+        /* Y que el ícono de tema claro esté oculto por defecto */
+        #theme-toggle .fa-sun {
+            display: none !important;
+        }
+
+        /* Cuando es modo claro, revertimos la visibilidad */
+        body.light-mode #theme-toggle .fa-moon {
+            display: none !important;
+        }
+
+        body.light-mode #theme-toggle .fa-sun {
+            display: block !important;
+        }
+
+        .game-info {
+            font-size: 0.8em;
+            color: var(--accent);
+            background-color: var(--card);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: 600;
+            border: 1px solid var(--border);
+        }
+
+        /* Estilos para el overlay de Game Over */
+        .game-over-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+            .game-over-overlay.active {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+
+            .game-over-overlay h2 {
+                font-size: 48px;
+                color: var(--accent);
+                margin-bottom: 0.5rem;
+                border-bottom: none;
+                text-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
+            }
+
+                /* CORRECCIÓN #1: Eliminar el # del h2 del Game Over */
+                .game-over-overlay h2::before {
+                    content: none;
+                }
+
+            .game-over-overlay p {
+                font-size: 20px;
+                color: var(--text);
+                margin-bottom: 20px;
+            }
+
+        /* Contenedor de botones */
+        .game-over-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Estilos de botones */
+        .game-over-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: background-color 0.2s, transform 0.1s, border-color 0.2s;
+        }
+
+        #restart-btn {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+            #restart-btn:hover {
+                background-color: var(--accent-hover);
+                transform: scale(1.05);
+            }
+
+        #skip-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid var(--border);
+        }
+
+            #skip-btn:hover {
+                background-color: var(--border);
+                transform: scale(1.05);
+            }
+
+        main {
+            width: 90%;
+            max-width: 900px;
+            background: var(--text-background);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        section {
+            padding: 1rem 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+            /* Estilo general para h2 con el # */
+            h2::before {
+                content: "#";
+                color: var(--accent);
+                font-size: 1.2em;
+                margin-right: 0.5rem;
+            }
+
+        section p, section li {
+            color: var(--secondary-text);
+        }
+
+        .job-entry {
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+            .job-entry h3 {
+                margin: 0 0 0.2rem;
+                font-size: 1.2rem;
+                color: var(--accent);
+            }
+
+            .job-entry p.date {
+                margin: 0 0 0.5rem;
+                font-size: 0.9em;
+                color: var(--secondary-text);
+            }
+
+            .job-entry ul {
+                list-style: disc;
+                padding-left: 1.2rem;
+                color: var(--secondary-text);
+            }
+
+            .job-entry li strong {
+                color: var(--text);
+            }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .skill-item-detailed {
+            background-color: var(--border);
+            color: var(--text);
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-align: center;
+        }
+
+            .skill-item-detailed span {
+                color: var(--success);
+                font-weight: 700;
+                display: block;
+            }
+
+        footer {
+            color: var(--secondary-text);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            margin-top: auto;
+            background-color: var(--text-background);
+            width: 100%;
+            padding: 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .social-icons {
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 15px;
+        }
+
+            .social-icons a {
+                color: var(--social-icon);
+                font-size: 1.5rem;
+                transition: color 0.2s;
+            }
+
+                .social-icons a:hover {
+                    color: var(--accent);
+                }
+        
+        #qr-container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            margin: 2rem auto 1rem; /* Centrado y margen */
+            z-index: 10;
+        }
+        #qr-container img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            border: 3px solid var(--accent); /* Usa la variable de acento dinámica */
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 0 15px rgba(var(--card-rgba), 0.7); /* Mantenemos la sombra, pero usaremos un color basado en la variable en el hover */
+        }
+        #qr-container a:hover img {
+            transform: scale(1.05);
+            border-color: var(--accent-hover); /* Usa la variable de acento hover dinámica */
+            box-shadow: 0 0 20px 5px var(--accent); /* Sombra más fuerte usando el color de acento */
+        }
+
+        @keyframes qr-pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(var(--card-rgba), 0.7);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 25px 10px var(--accent);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(var(--card-rgba), 0.7);
+            }
+        }
+
+        #qr-container.animating img {
+            animation: qr-pulse 1.2s ease-in-out;
+        }
+
+        
+
+        body.light-mode #qr-container img {
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        #qr-container a {
+            position: relative;
+            display: inline-block;
+        }
+
+        body.light-mode #qr-container a::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--accent);
+            mix-blend-mode: screen;
+            opacity: 0.9;
+            pointer-events: none;
+            border-radius: 8px; /* To match the image's border-radius */
+        }
+
+        /* ================================================= */
+        /* === 3. NUEVO MENÚ LATERAL Y CHAT MODAL === */
+        /* ================================================= */
+
+        #side-menu {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 60px; /* Ancho colapsado */
+            background-color: rgba(var(--card-rgba), 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* CORRECCIÓN: REDUCIR PADDING SUPERIOR (De 1rem a 0.5rem) */
+            padding-top: 0.5rem; 
+            z-index: 1100;
+            transition: width 0.3s ease, background-color 0.3s, border-color 0.3s;
+            overflow: hidden;
+        }
+
+        #side-menu:hover, #side-menu.pinned {
+            width: 220px; /* Ancho expandido */
+        }
+
+        #side-menu.pinned {
+            box-shadow: var(--shadow);
+        }
+
+        .menu-item {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            text-decoration: none;
+            gap: 1.5rem;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .menu-item:hover {
+            color: var(--accent);
+            background-color: rgba(var(--card-rgba), 0.8);
+        }
+
+        .menu-item .icon {
+            font-size: 1.5rem;
+            width: 28px; /* Ancho fijo para el ícono */
+            text-align: center;
+        }
+
+        .menu-item .tooltip {
+            font-size: 1rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease 0.1s;
+        }
+
+        #side-menu:hover .tooltip, #side-menu.pinned .tooltip {
+            opacity: 1;
+        }
+
+        #pin-menu-btn {
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+        }
+
+        #pin-menu-btn.pinned {
+            color: var(--accent);
+        }
+
+        .menu-separator {
+            width: 80%;
+            height: 1px;
+            background-color: var(--border);
+            margin: 0.5rem 0;
+        }
+
+        /* Estilos genéricos para Modales */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%;
+            background-color: rgba(var(--card-rgba), 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            z-index: 1200;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        }
+
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: move; /* Cursor para indicar que se puede arrastrar */
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text);
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .close-modal-btn:hover {
+            color: var(--accent);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            flex-grow: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--secondary-text);
+            position: relative;
+        }
+        
+        .modal-body .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .modal-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Chat Modal Específico */
+        #chat-modal {
+            max-width: 400px;
+            height: 600px;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--card);
+            color: var(--text);
+            font-family: var(--font-main);
+        }
+
+        .chat-input::placeholder {
+            color: var(--secondary-text);
+        }
+
+        /* Portafolio/Paginas/Diseños Modales */
+        .gallery-modal {
+            max-width: 80vw;
+            max-height: 80vh;
+            width: 1200px;
+            height: 700px;
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(var(--card-rgba), 0.8);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 2rem;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .nav-arrow:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .nav-arrow.left {
+            left: 1.5rem;
+        }
+
+        .nav-arrow.right {
+            right: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+                padding-bottom: 80px; /* Espacio para menú en móvil */
+            }
+
+            #side-menu, #side-menu:hover, #side-menu.pinned {
+                top: auto;
+                bottom: 0;
+                width: 100vw;
+                height: 80px;
+                flex-direction: row;
+                justify-content: space-around;
+                padding-top: 0;
+                border-right: none;
+                border-top: 1px solid var(--border);
+            }
+
+            .menu-item .tooltip {
+                display: none; /* Ocultar tooltips en móvil */
+            }
+
+            #pin-menu-btn, .menu-separator {
+                display: none; /* Ocultar pin y separador en móvil */
+            }
+
+            header {
+                padding: 2rem 1rem; /* Menos padding en móvil */
+            }
+
+            .header-info {
+                padding: 1rem;
+            }
+
+            main {
+                padding: 1rem;
+                width: 95%;
+            }
+
+            nav {
+                justify-content: center;
+            }
+
+            #qr-container {
+                margin: 1rem auto;
+            }
+        }
+
+/* ================================================= */
+/* === ESTILOS PARA EL BOTÓN DE PERFIL (FOTO) - CORREGIDO === */
+/* ================================================= */
+
+#profile-btn {
+    padding: 0;
+    /* CORRECCIÓN: REDUCIR MARGEN INFERIOR (De 1rem a 0.5rem) */
+    margin-bottom: 0.5rem; 
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    background-color: var(--card);
+    border: 3px solid var(--accent);
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0; 
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+#profile-btn:hover {
+    transform: scale(1.08); 
+    border-color: var(--accent-hover);
+}
+
+#side-menu:hover #profile-btn,
+#side-menu.pinned #profile-btn {
+    width: 80px;
+    height: 80px;
+    /* CORRECCIÓN: REDUCIR MARGEN INFERIOR EN ESTADO EXPANDIDO (De 1.5rem a 1rem) */
+    margin-bottom: 1rem;
+}
+
+#profile-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* ================================================= */
+/* === ESTILOS PARA EL MODAL DE LANYARD (Contenedor del 3D) === */
+/* ================================================= */
+
+#lanyard-modal {
+    max-width: 90vw;
+    width: 800px; 
+    height: 600px; 
+}
+
+#lanyard-modal .modal-body {
+    padding: 0; /* Permite que el contenido (iframe) llene todo el modal */
+    display: block; 
+}
+
+#lanyard-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: transparent;
+}
+
+/* ================================================= */
+/* === NUEVO CSS PARA EL BOTÓN DE COLABORACIÓN === */
+/* ================================================= */
+
+.cta-button {
+    background-color: var(--accent);
+    color: var(--card);
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 10px rgba(var(--card-rgba), 0.5); 
+}
+
+.cta-button:hover {
+    background-color: var(--accent-hover);
+    color: black; 
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 15px var(--accent);
+}
+    </style>
+</head>
+<body>
+<div class="theme-toggle-container">
+    <button id="theme-toggle">
+        <i class="fa-solid fa-moon"></i>
+        <i class="fa-solid fa-sun"></i>
+    </button>
+</div>
+
+    <!-- ================================================= -->
+    <!-- === NUEVO MENÚ LATERAL === -->
+    <!-- ================================================= -->
+    <nav id="side-menu">
+    
+    <button id="profile-btn" data-modal-target="#lanyard-modal">
+        <img src="imagenes/carri.imagen.jpg" alt="Foto de Perfil de Angel Carrillo">
+    </button>
+    
+    <button id="pin-menu-btn" class="menu-item">
+        <span class="icon"><i class="fa-solid fa-thumbtack"></i></span>
+    </button>
+    <div class="menu-separator"></div>
+    <button class="menu-item" data-modal-target="#chat-modal">
+        <span class="icon"><i class="fa-solid fa-comments"></i></span>
+        <span class="tooltip">Chat</span>
+    </button>
+    <button class="menu-item" data-modal-target="#portfolio-modal">
+        <span class="icon"><i class="fa-solid fa-briefcase"></i></span>
+        <span class="tooltip">Portafolio</span>
+    </button>
+    <button class="menu-item" data-modal-target="#pages-modal">
+        <span class="icon"><i class="fa-solid fa-file-lines"></i></span>
+        <span class="tooltip">Páginas</span>
+    </button>
+    <button class="menu-item" data-modal-target="#designs-modal">
+        <span class="icon"><i class="fa-solid fa-palette"></i></span>
+        <span class="tooltip">Diseños</span>
+    </button>
+</nav>
+
+    <!-- ================================================= -->
+    <!-- === NUEVAS VENTANAS MODALES === -->
+    <!-- ================================================= -->
+    <!-- Chat Modal -->
+    <div id="chat-modal" class="modal">
+        <div class="modal-header">
+            <h3 style="display: flex; align-items: center; gap: 15px;">
+                Contactarme
+                <a href="https://wa.me/528120106123" target="_blank" title="O chatea por WhatsApp" style="font-size: 1.5rem; color: var(--accent); line-height: 1;">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+            </h3>
+            <button class="close-modal-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="icon"><i class="fa-solid fa-wrench"></i></div>
+            <p>Esta función de chat directo está en construcción.</p>
+            <p>Puedes usar el ícono de WhatsApp de arriba para un contacto inmediato.</p>
+        </div>
+        <div class="modal-footer">
+            <input type="text" class="chat-input" placeholder="Escribe un mensaje (deshabilitado)..." disabled>
+        </div>
+    </div>
+
+    <!-- Portfolio Modal -->
+    <div id="portfolio-modal" class="modal gallery-modal">
+        <div class="modal-header">
+            <h3>Mi Portafolio</h3>
+            <button class="close-modal-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <button class="nav-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="icon"><i class="fa-solid fa-code"></i></div>
+            <p>Aquí mostraré mis proyectos de código.</p>
+            <button class="nav-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Pages Modal -->
+    <div id="pages-modal" class="modal gallery-modal">
+        <div class="modal-header">
+            <h3>Mis Páginas</h3>
+            <button class="close-modal-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <button class="nav-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="icon"><i class="fa-solid fa-window-maximize"></i></div>
+            <p>Aquí mostraré mis páginas web completas.</p>
+            <button class="nav-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Designs Modal -->
+    <div id="designs-modal" class="modal gallery-modal">
+        <div class="modal-header">
+            <h3>Mis Diseños</h3>
+            <button class="close-modal-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <button class="nav-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="icon"><i class="fa-solid fa-pen-ruler"></i></div>
+            <p>Aquí mostraré mis diseños gráficos y de UI/UX.</p>
+            <button class="nav-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+<div id="lanyard-modal" class="modal">
+    <div class="modal-header">
+        <h3>Simulación Interactiva 3D (Cordón)</h3>
+        <button class="close-modal-btn">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div style="text-align: center; padding: 50px; color: var(--secondary-text);">
+            <i class="fa-solid fa-cube" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+            <p>La simulación 3D (el Cordón Lanyard) se cargará aquí.</p>
+            <p><strong>Recuerda:</strong> Para que funcione, debes compilar el código React Three Fiber y alojarlo externamente.</p>
+        </div>
+    </div>
+</div>
+
+
+    <canvas id="zombie-canvas"></canvas>
+
+    <div id="game-over-overlay" class="game-over-overlay">
+        <h2 id="game-over-text">💀 GAME OVER 💀</h2>
+        <p>Puntuación Final: <span id="final-score">0</span></p>
+        <div class="game-over-actions">
+            <button id="skip-btn" class="game-over-btn">Ver Portafolio (Skip)</button>
+            <button id="restart-btn" class="game-over-btn">Reiniciar Juego</button>
+        </div>
+    </div>
+
+    <header>
+
+        <div class="header-info">
+            <h1>Angel Abraham Carrillo Garza</h1>
+            <p>Desarrollador Web | Programador | Diseñador Digital</p>
+            <nav>
+                <a href="#sobre-mi">Perfil</a>
+                <a href="#habilidades">Habilidades</a>
+                <a href="#experiencia">Experiencia</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+            <div class="game-container">
+                <p class="game-info">← → Mover | Espacio Disparar (Izquierda) | Enter Disparar (Derecha) | R Reiniciar</p>
+            </div>
+        </div>
+    </header>
+
+    <div id="qr-container">
+        <a onclick="navigateToLinkedInWithTransition('https://www.linkedin.com/in/angel-carrillo-743938262/')">
+            <img src="imagenes/qr.link.png" alt="Código QR de Angel Carrillo a LinkedIn">
+        </a>
+    </div>
+
+    <main>
+        <section id="sobre-mi">
+            <h2>Perfil Profesional</h2>
+            <p>
+                Soy un desarrollador web apasionado por el **código limpio**, el **diseño funcional** y la **innovación**. Combino una sólida base en el diseño gráfico con experiencia en el desarrollo Front-End, creando interfaces que no solo lucen bien, sino que son **eficientes, responsivas** y ofrecen una excelente experiencia de usuario. Siempre estoy listo para adoptar nuevas tecnologías y enfrentar desafíos complejos.
+            </p>
+        </section>
+        <section id="habilidades">
+            <h2>Habilidades Técnicas</h2>
+            <div class="skills-grid">
+                <div class="skill-item-detailed">HTML5 & CSS3: <span>Estructura y Estilos Avanzados</span></div>
+                <div class="skill-item-detailed">JavaScript (ES6+): <span>Lógica y Desarrollo Front-End</span></div>
+                <div class="skill-item-detailed">Diseño Responsive: <span>Mobile First y Flexbox/Grid</span></div>
+                <div class="skill-item-detailed">Git & GitHub: <span>Control de Versiones y Colaboración</span></div>
+                <div class="skill-item-detailed">Suite Adobe: <span>Photoshop, Illustrator, InDesign</span></div>
+                <div class="skill-item-detailed">UX/UI: <span>Figma, Wireframing y Prototipado</span></div>
+            </div>
+        </section>
+        <section id="experiencia">
+            <h2>Experiencia Destacada</h2>
+            <div class="job-entry">
+                <h3>Desarrollador Web Front-End (Freelance)</h3>
+                <p class="date">Enero 2022 - Presente | Remoto</p>
+                <ul>
+                    <li>Implementación de diseños de alta fidelidad en código funcional utilizando **HTML/CSS y JavaScript**.</li>
+                    <li>Optimización de la velocidad de carga y accesibilidad (WCAG) para diversos clientes.</li>
+                    <li>Creación de **Componentes Reutilizables** y módulos de interfaz para sistemas de gestión.</li>
+                </ul>
+            </div>
+            <div class="job-entry">
+                <h3>Diseñador Gráfico & Digital</h3>
+                <p class="date">2020 - 2021 | Agencia [Nombre Agencia]</p>
+                <ul>
+                    <li>Desarrollo de la **Identidad Visual** (Branding, Logotipos) para más de 10 startups.</li>
+                    <li>Creación de activos digitales para campañas de marketing (banners, anuncios, email marketing).</li>
+                    <li>Conversión de conceptos de marketing en **mockups de UI** para desarrollo web.</li>
+                </ul>
+            </div>
+        </section>
+        <section id="colaboracion" style="text-align: center; padding: 2rem 0;">
+            <h2>Colaboración & Código</h2>
+            <p>¿Te gusta lo que ves? Este proyecto es público. ¡Mira el código o conéctate!</p>
+            <a href="https://github.com/tu-usuario" target="_blank" class="cta-button">
+                <i class="fa-brands fa-github"></i> ¡Conectar en GitHub!
+            </a>
+        </section>
+    </main>
+
+    <footer>
+    <div class="social-icons">
+        <a href="https://www.linkedin.com/in/angel-carrillo-743938262/" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        
+        <a href="github.com/tu-usuario" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
+        
+        <a href="https://wa.me/528120106123" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        
+        <a href="#" target="_blank" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+    </div>
+    <p>© 2025 Angel Abraham Carrillo Garza. Desarrollado con código y diseño.</p>
+</footer>
+
+    <script>
+    function navigateToLinkedInWithTransition(url) {
+        const qrContainer = document.getElementById('qr-container');
+        
+        // Add the class to trigger the animation
+        qrContainer.classList.add('animating');
+
+        // Open the link after the animation finishes
+        setTimeout(() => {
+            window.open(url, '_blank');
+            
+            // Remove the class so the animation can play again if the user comes back
+            qrContainer.classList.remove('animating');
+        }, 1200); // Match this to the animation duration
+    }
+
+        // =================================================
+        // === 1. Lógica del Botón de Tema (Modo Claro/Oscuro) ===
+        // =================================================
+        const themeToggle = document.getElementById('theme-toggle');
+        const toggleLightContent = document.getElementById('toggle-light-content');
+        const toggleDarkContent = document.getElementById('toggle-dark-content');
+        const body = document.body;
+
+        function updateTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const isLightMode = savedTheme === 'light';
+
+            // Actualiza la clase del body para aplicar los estilos CSS
+            if (isLightMode) {
+                body.classList.add('light-mode');
+                themeToggle.classList.remove('dark-toggle');
+                themeToggle.classList.add('light-toggle');
+
+                // Muestra el botón para cambiar a oscuro (el opuesto al tema actual)
+                toggleLightContent.classList.add('hidden'); // Oculta "Modo Claro"
+                toggleDarkContent.classList.remove('hidden'); // Muestra "Modo Oscuro"
+
+            } else {
+                body.classList.remove('light-mode');
+                themeToggle.classList.remove('light-toggle');
+                themeToggle.classList.add('dark-toggle');
+
+                // Muestra el botón para cambiar a claro (el opuesto al tema actual)
+                toggleDarkContent.classList.add('hidden'); // Oculta "Modo Oscuro"
+                toggleLightContent.classList.remove('hidden'); // Muestra "Modo Claro"
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            // Si tiene light-mode, el tema actual es claro, cambiar a oscuro
+            const currentTheme = body.classList.contains('light-mode') ? 'dark' : 'light';
+            localStorage.setItem('theme', currentTheme);
+            updateTheme();
+        });
+
+        // Inicializa el tema al cargar la página
+        updateTheme();
+
+
+        // =================================================
+        // === 2. MINI JUEGO DE ZOMBIES (LÓGICA COMPLETA) ===
+        // =================================================
+
+        function initGame() {
+            const canvas = document.getElementById("zombie-canvas");
+            const gameOverOverlay = document.getElementById("game-over-overlay");
+            const finalScoreElement = document.getElementById("final-score");
+            const restartButton = document.getElementById("restart-btn");
+            const skipButton = document.getElementById("skip-btn");
+
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+
+            // Constantes
+            const ENTITY_SIZE = 25;
+            const BULLET_SPEED = 10;
+            const ZOMBIE_SPEED_BASE = 0.5;
+            const GROUND_OFFSET = 15;
+            const MAX_ZOMBIES = 10;
+            const SPAWN_RATE = 1500;
+
+            // Variables de estado del juego
+            let player = { x: 0, y: 0, w: ENTITY_SIZE, h: ENTITY_SIZE, color: "#e74c3c", direction: 'right' };
+            let bullets = [];
+            let zombies = [];
+            let score = 0;
+            let keys = {};
+            let isRunning = true;
+            let lastZombieTime = 0;
+            let animationFrameId;
+
+            // Ajustar el tamaño del canvas y la posición del jugador
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                player.y = canvas.height - player.h - GROUND_OFFSET;
+                if (player.x > canvas.width - player.w) {
+                    player.x = canvas.width - player.w;
+                }
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Dibuja los elementos del juego
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Dibuja el jugador con indicador de dirección
+                ctx.fillStyle = player.color;
+                ctx.fillRect(player.x, player.y, player.w, player.h);
+
+                ctx.fillStyle = "white";
+                if (player.direction === 'right') {
+                    ctx.beginPath();
+                    ctx.moveTo(player.x + player.w, player.y + player.h / 2);
+                    ctx.lineTo(player.x + player.w - 8, player.y + player.h / 2 - 5);
+                    ctx.lineTo(player.x + player.w - 8, player.y + player.h / 2 + 5);
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(player.x, player.y + player.h / 2);
+                    ctx.lineTo(player.x + 8, player.y + player.h / 2 - 5);
+                    ctx.lineTo(player.x + 8, player.y + player.h / 2 + 5);
+                    ctx.fill();
+                }
+
+                // Dibuja las balas
+                bullets.forEach(b => {
+                    ctx.fillStyle = "#f1c40f";
+                    ctx.fillRect(b.x, b.y, b.w, b.h);
+                });
+
+                // Dibuja los zombies
+                zombies.forEach(z => {
+                    ctx.fillStyle = "#2ecc71";
+                    ctx.fillRect(z.x, z.y, z.w, z.h);
+                });
+
+                // Dibuja el marcador
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 20px " + (getComputedStyle(body).fontFamily);
+                ctx.textAlign = "right";
+                ctx.fillText(`Puntuación: ${score}`, canvas.width - 20, 30);
+            }
+
+            // Mueve los elementos del juego
+            function update() {
+                if (!isRunning) return;
+
+                // Mover jugador
+                const playerSpeed = 5;
+                if (keys['ArrowLeft'] && player.x > 0) {
+                    player.x -= playerSpeed;
+                    player.direction = 'left';
+                }
+                if (keys['ArrowRight'] && player.x < canvas.width - player.w) {
+                    player.x += playerSpeed;
+                    player.direction = 'right';
+                }
+
+                // Mover balas
+                bullets = bullets.filter(b => {
+                    b.x += b.direction === 'right' ? BULLET_SPEED : -BULLET_SPEED;
+                    return b.x > -10 && b.x < canvas.width + 10;
+                });
+
+                // Mover y verificar colisión de zombies
+                zombies = zombies.filter(z => {
+                    // Mueve al zombie hacia el jugador
+                    if (player.x > z.x) {
+                        z.x += z.speed;
+                    } else if (player.x < z.x) {
+                        z.x -= z.speed;
+                    }
+
+                    // Verificar colisión con el jugador (PAUSA el juego y muestra Game Over)
+                    if (
+                        player.x < z.x + z.w &&
+                        player.x + player.w > z.x &&
+                        player.y < z.y + z.h &&
+                        player.y + player.h > z.y
+                    ) {
+                        pauseGame();
+                        return true; // No lo eliminamos, solo pausamos
+                    }
+
+                    // Verificar colisión con balas
+                    for (let i = 0; i < bullets.length; i++) {
+                        const b = bullets[i];
+                        if (
+                            b.x < z.x + z.w &&
+                            b.x + b.w > z.x &&
+                            b.y < z.y + z.h &&
+                            b.y + b.h > z.y
+                        ) {
+                            bullets.splice(i, 1);
+                            score += 100;
+                            return false; // Elimina el zombie
+                        }
+                    }
+
+                    return true;
+                });
+            }
+
+            // Generar nuevos zombies
+            function spawnZombie(currentTime) {
+                if (!isRunning) return;
+
+                if (currentTime - lastZombieTime > SPAWN_RATE && zombies.length < MAX_ZOMBIES) {
+                    lastZombieTime = currentTime;
+
+                    const side = Math.random() < 0.5 ? 'left' : 'right';
+                    const x = side === 'left' ? -ENTITY_SIZE : canvas.width + ENTITY_SIZE;
+
+                    const newZombie = {
+                        x: x,
+                        y: canvas.height - ENTITY_SIZE - GROUND_OFFSET,
+                        w: ENTITY_SIZE,
+                        h: ENTITY_SIZE,
+                        speed: ZOMBIE_SPEED_BASE + Math.random() * 0.5,
+                        color: "#2ecc71"
+                    };
+                    zombies.push(newZombie);
+                }
+            }
+
+            // Lógica de disparo con dirección
+            let lastShotTime = 0;
+            const shotCooldown = 200;
+
+            function shoot(direction) {
+                if (!isRunning) return;
+
+                const currentTime = Date.now();
+                if (currentTime - lastShotTime < shotCooldown) return;
+                lastShotTime = currentTime;
+
+                let bulletX = player.x + player.w / 2;
+                if (direction === 'right') {
+                    bulletX = player.x + player.w;
+                } else if (direction === 'left') {
+                    bulletX = player.x - 10;
+                }
+
+                const newBullet = {
+                    x: bulletX,
+                    y: player.y + player.h / 2 - 2,
+                    w: 10,
+                    h: 4,
+                    direction: direction
+                };
+                bullets.push(newBullet);
+            }
+
+            // Bucle principal del juego
+            function loop(currentTime) {
+                if (isRunning) {
+                    update();
+                    spawnZombie(currentTime);
+                }
+                draw();
+                animationFrameId = requestAnimationFrame(loop);
+            }
+
+            // Pausar el juego y mostrar Game Over
+            function pauseGame() {
+                isRunning = false;
+                finalScoreElement.textContent = score;
+                gameOverOverlay.classList.add('active');
+            }
+
+            // Reiniciar el juego (Llamado por el botón y 'R')
+            function resetGame() {
+                isRunning = true;
+                player.x = 50;
+                player.direction = 'right';
+                bullets = [];
+                zombies = [];
+                score = 0;
+                gameOverOverlay.classList.remove('active');
+                resizeCanvas();
+
+                // Si se estaba pausado, se reinicia el loop
+                if (!animationFrameId) {
+                    animationFrameId = requestAnimationFrame(loop);
+                }
+            }
+
+            // Función para hacer Skip (misma lógica que el botón)
+            function skipGame() {
+                if (!isRunning) { // Solo si el juego está pausado (Game Over)
+                    gameOverOverlay.classList.remove('active');
+                    // Opcional: Podrías detener el loop por completo si haces Skip,
+                    // pero es mejor dejarlo en un estado pausado.
+                }
+            }
+
+            // Manejadores de Eventos (Teclado)
+            document.addEventListener('keydown', (e) => {
+                keys[e.key] = true;
+
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    shoot('right');
+                }
+
+                if (e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    shoot('left');
+                }
+
+                // Reiniciar con 'R'
+                if (e.key === 'r' || e.key === 'R') {
+                    resetGame();
+                }
+
+                // CORRECCIÓN #2: Activar Skip con la tecla ESC
+                if (e.key === 'Escape') {
+                    skipGame();
+                }
+            });
+
+            document.addEventListener('keyup', (e) => {
+                keys[e.key] = false;
+            });
+
+            // Manejadores de Eventos (Botones de Game Over)
+            restartButton.addEventListener('click', () => {
+                resetGame();
+            });
+
+            skipButton.addEventListener('click', () => {
+                skipGame(); // Usa la nueva función skipGame
+            });
+
+
+            // Lógica para el scroll suave de la navegación
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Iniciar el juego
+            resetGame();
+        }
+
+        // =================================================
+        // === 3. LÓGICA DEL NUEVO MENÚ Y MODALES ===
+        // =================================================
+        function initSideMenuAndModals() {
+            const sideMenu = document.getElementById('side-menu');
+            const pinBtn = document.getElementById('pin-menu-btn');
+            const menuButtons = document.querySelectorAll("[data-modal-target]");
+            const closeModalButtons = document.querySelectorAll(".close-modal-btn");
+
+            // Lógica para anclar el menú
+            function applyPinState() {
+                const isPinned = localStorage.getItem('menuPinned') === 'true';
+                if (isPinned) {
+                    sideMenu.classList.add('pinned');
+                    pinBtn.classList.add('pinned');
+                    document.body.style.paddingLeft = '220px';
+                } else {
+                    sideMenu.classList.remove('pinned');
+                    pinBtn.classList.remove('pinned');
+                    document.body.style.paddingLeft = '60px';
+                }
+            }
+
+            pinBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isPinned = sideMenu.classList.toggle('pinned');
+                pinBtn.classList.toggle('pinned');
+                localStorage.setItem('menuPinned', isPinned);
+                applyPinState(); // Re-aplica el padding del body
+            });
+
+            function closeAllModals() {
+                document.querySelectorAll('.modal.visible').forEach(modal => {
+                    modal.classList.remove('visible');
+                });
+            }
+
+            // Lógica para abrir modales
+            menuButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetModal = document.querySelector(button.dataset.modalTarget);
+                    if (targetModal) {
+                        closeAllModals(); // Cierra cualquier modal abierto
+                        targetModal.classList.add('visible');
+                    }
+                });
+            });
+
+            // Lógica para cerrar modales
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    button.closest('.modal').classList.remove('visible');
+                });
+            });
+            
+            // Cerrar modal al hacer clic fuera de él
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.classList.remove('visible');
+                }
+            });
+
+            // Aplicar estado de anclaje al cargar
+            applyPinState();
+        }
+
+        // =================================================
+        // === 4. LÓGICA PARA ARRASTRAR MODALES ===
+        // =================================================
+        function initDraggableModals() {
+            const modals = document.querySelectorAll('.modal');
+
+            modals.forEach(modal => {
+                const header = modal.querySelector('.modal-header');
+                let isDragging = false;
+                let initialX, initialY, offsetX, offsetY;
+
+                header.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    
+                    // Si es la primera vez que se arrastra, se convierte la posición a píxeles
+                    if (!modal.style.left) {
+                        const rect = modal.getBoundingClientRect();
+                        modal.style.left = `${rect.left}px`;
+                        modal.style.top = `${rect.top}px`;
+                        modal.style.transform = 'none'; // Eliminar el transform para un posicionamiento preciso
+                    }
+
+                    initialX = e.clientX;
+                    initialY = e.clientY;
+                    offsetX = modal.offsetLeft;
+                    offsetY = modal.offsetTop;
+
+                    document.onmousemove = (moveEvent) => {
+                        if (isDragging) {
+                            const dx = moveEvent.clientX - initialX;
+                            const dy = moveEvent.clientY - initialY;
+                            modal.style.left = `${offsetX + dx}px`;
+                            modal.style.top = `${offsetY + dy}px`;
+                        }
+                    };
+
+                    document.onmouseup = () => {
+                        isDragging = false;
+                        document.onmousemove = null;
+                        document.onmouseup = null;
+                    };
+                });
+            });
+        }
+
+
+        // Ejecutar la inicialización del juego y del menú
+        window.onload = function() {
+            initGame();
+            initSideMenuAndModals();
+            initDraggableModals();
+        };
+    </script>
+</body>
+</html>

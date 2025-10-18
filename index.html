@@ -681,8 +681,9 @@
                 padding: 1rem;
             }
             main {
-                padding: 1rem;
                 width: 95%;
+                /* Reducimos el padding en móvil para que no se pegue a los bordes */
+                padding: 1rem;
             }
             nav {
                 justify-content: center;
@@ -707,6 +708,7 @@
             .game-container {
                 flex-direction: column; /* Apilamos la puntuación y las instrucciones */
                 align-items: center;  /* Centramos todo */
+                display: none;
                 gap: 0.5rem;          /* Reducimos el espacio entre ellos */
                 text-align: center;   /* Centramos el texto de las instrucciones */
             }

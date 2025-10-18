@@ -674,23 +674,6 @@
                 padding-left: 0;
                 padding-bottom: 80px;
             }
-            #side-menu, #side-menu:hover, #side-menu.pinned {
-                top: auto;
-                bottom: 0;
-                width: 100vw;
-                height: 80px;
-                flex-direction: row;
-                justify-content: space-around;
-                padding-top: 0;
-                border-right: none;
-                border-top: 1px solid var(--border);
-            }
-            .menu-item .tooltip {
-                display: none;
-            }
-            #pin-menu-btn, .menu-separator {
-                display: none;
-            }
             header {
                 padding: 2rem 1rem;
             }
@@ -707,6 +690,103 @@
             #qr-container {
                 margin: 1rem auto;
             }
+            /* Ajustamos el tamaño del nombre para que no sea tan grande */
+            header h1 {
+                font-size: 1.8rem;
+            }
+            /* Hacemos que el contenedor de botones (nav) se comporte como una columna */
+            nav {
+                flex-direction: column; /* Apilamos los botones verticalmente */
+                width: 100%; /* Hacemos que ocupe todo el ancho del cuadro */
+                align-items: stretch; /* Estiramos los botones */
+            }
+            /* Centramos el texto de cada botón */
+            nav a {
+                text-align: center;
+            }
+            .game-container {
+                flex-direction: column; /* Apilamos la puntuación y las instrucciones */
+                align-items: center;  /* Centramos todo */
+                gap: 0.5rem;          /* Reducimos el espacio entre ellos */
+                text-align: center;   /* Centramos el texto de las instrucciones */
+            }
+            .game-info {
+                font-size: 0.75em;
+            }
+            /* --- INICIO: ESTILOS BARRA INFERIOR MÓVIL --- */
+            #side-menu, #side-menu:hover, #side-menu.pinned {
+                top: auto;
+                bottom: 0;
+                left: 0;
+                width: 100vw;
+                height: 80px;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 0 0.5rem; /* Añadimos un poco de padding horizontal */
+                padding-top: 0;
+                border-right: none;
+                border-top: 1px solid var(--border);
+                overflow: visible;
+                position: fixed;
+                z-index: 1100;
+                background-color: rgba(var(--card-rgba), 0.85);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                align-items: center; /* Centramos verticalmente los items */
+            }
+            /* Ocultar elementos no deseados en móvil */
+            #pin-menu-btn, .menu-separator, .menu-item .tooltip {
+                display: none !important;
+            }
+            /* Estilos para CADA botón, incluido el de perfil */
+            #side-menu > button { /* Seleccionamos solo los botones hijos directos */
+                flex-basis: 0; /* Base flexible 0 para que crezcan igual */
+                flex-grow: 1;  /* Permitimos que crezcan para llenar espacio */
+                display: flex; /* Usamos flex para centrar el contenido del botón */
+                flex-direction: column; /* Apilamos icono y texto (aunque el texto no se vea) */
+                justify-content: center; /* Centramos verticalmente */
+                align-items: center;    /* Centramos horizontalmente */
+                padding: 0.5rem 0.2rem; /* Padding vertical y un poco horizontal */
+                height: 100%; /* Ocupar toda la altura de la barra */
+                gap: 2px; /* Espacio mínimo por si acaso */
+                background: none;
+                border: none;
+                color: var(--secondary-text);
+                transition: color 0.2s ease;
+            }
+            #side-menu > button:hover {
+                color: var(--accent);
+            }
+            /* Estilos específicos para el botón de perfil en móvil */
+            #profile-btn {
+                order: 2; /* Movemos el botón de perfil al centro (1, 2, 3...) */
+                flex-grow: 0; /* No queremos que el botón de perfil crezca más que los otros */
+                width: 60px !important; /* Forzamos un tamaño específico más grande */
+                height: 60px !important;
+                margin-top: -20px; /* Lo subimos un poco para que sobresalga */
+                border-radius: 50%;
+                border: 3px solid var(--accent); /* Mantenemos el borde */
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.4); /* Sombra para destacar */
+                z-index: 1; /* Asegurar que esté por encima de la barra */
+                padding: 0 !important; /* Quitamos padding interno */
+                background-color: var(--card); /* Tapa la línea de la barra */
+            }
+            #profile-btn img {
+                width: 100%;
+                height: 100%;
+            }
+            /* Estilos para los iconos normales (NO el de perfil) */
+            .menu-item .icon {
+                font-size: 1.6rem; /* Ajustamos tamaño de iconos normales */
+                line-height: 1;
+                width: auto;
+            }
+            /* Asignamos orden a los demás botones para que queden alrededor */
+            .menu-item[data-modal-target="#chat-modal"] { order: 1; }
+            .menu-item[data-modal-target="#portfolio-modal"] { order: 1; }
+            .menu-item[data-modal-target="#pages-modal"] { order: 3; }
+            .menu-item[data-modal-target="#designs-modal"] { order: 3; }
+            /* --- FIN: ESTILOS BARRA INFERIOR MÓVIL --- */
         }
         #profile-btn {
             padding: 0;
@@ -772,6 +852,13 @@
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 4px 15px var(--accent);
         }
+
+/* Ocultar el Game Over en pantallas pequeñas */
+@media (max-width: 599px) {
+  .game-over-overlay.active {
+    display: none;
+  }
+}
     </style>
 </head>
 <body>
@@ -1272,15 +1359,25 @@
         const closeModalButtons = document.querySelectorAll(".close-modal-btn");
 
         function applyPinState() {
-            const isPinned = localStorage.getItem('menuPinned') === 'true';
-            if (isPinned) {
-                sideMenu.classList.add('pinned');
-                pinBtn.classList.add('pinned');
-                document.body.style.paddingLeft = '220px';
+            // Comprobamos si estamos en la vista de escritorio (coincide con la media query)
+            if (window.matchMedia('(min-width: 769px)').matches) {
+                // Esta es tu lógica original para escritorio
+                const isPinned = localStorage.getItem('menuPinned') === 'true';
+                if (isPinned && pinBtn) { // pinBtn puede no existir en móvil
+                    sideMenu.classList.add('pinned');
+                    pinBtn.classList.add('pinned');
+                    document.body.style.paddingLeft = '220px';
+                } else {
+                    sideMenu.classList.remove('pinned');
+                    pinBtn.classList.remove('pinned');
+                    document.body.style.paddingLeft = '60px';
+                }
             } else {
+                // Si estamos en móvil, forzamos a que no haya padding-left.
+                document.body.style.paddingLeft = '0px';
+                // Y nos aseguramos de que no esté "pinned" visualmente
                 sideMenu.classList.remove('pinned');
-                pinBtn.classList.remove('pinned');
-                document.body.style.paddingLeft = '60px';
+                if(pinBtn) pinBtn.classList.remove('pinned');
             }
         }
 
@@ -1291,6 +1388,8 @@
             localStorage.setItem('menuPinned', isPinned);
             applyPinState();
         });
+
+        window.addEventListener('resize', applyPinState); // Re-evaluar al cambiar tamaño
 
         function closeAllModals() {
             document.querySelectorAll('.modal.visible').forEach(modal => {

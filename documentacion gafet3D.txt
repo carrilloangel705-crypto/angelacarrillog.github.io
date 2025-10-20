@@ -1,0 +1,103 @@
+DOCUMENTACIÓN DE IMPLEMENTACIÓN HÍBRIDA (Lanyard 3D)
+
+PROYECTO: carrilloangel.com
+FECHA DE FINALIZACIÓN: 19/10/2025
+ARQUITECTURA: Híbrida (HTML/JS + React Three Fiber/Rapier en Iframe)
+
+OBJETIVO: Integrar una simulación 3D interactiva de un cordón Lanyard (gafete) usando la imagen de perfil del usuario en un sitio web basado en HTML plano.
+
+ARQUITECTURA ESTRATÉGICA IMPLEMENTADA
+
+Debido a que el código del Lanyard utiliza React, TypeScript, Three.js, y la librería de física Rapier, no podía insertarse directamente en el index.html.
+
+Frontend Principal: HTML/CSS/JS (carrilloangel.com)
+
+Componente 3D (Lanyard): Aplicación de React aislada.
+
+Integración: La aplicación React fue compilada a JavaScript/HTML estático y cargada en la página principal mediante un <iframe> dentro de una ventana modal.
+
+URL de la App Compilada: https://carrilloangel.com/lanyard/
+
+Personalización: Se descartó el modelo GLB externo y se generó un cubo 3D simple dentro del código (código de emergencia), texturizado con la imagen de perfil local del usuario (carri.imagen.jpg).
+
+FLUJO DE TRABAJO Y COMANDOS EJECUTADOS (FASES)
+
+FASE 1: PREPARACIÓN DEL ENTORNO Y ASSETS (Gemini CLI)
+
+OBJETIVO
+
+COMANDO PRINCIPAL
+
+NOTAS
+
+1.1 Crear Proyecto Base
+
+npm create vite@latest lanyard-app -- --template react-ts && npm install
+
+Crea la estructura de React/TS e instala dependencias.
+
+1.2 Instalar 3D/Física
+
+npm install three @react-three/fiber @react-three/drei @react-three/rapier meshline
+
+Instala librerías necesarias.
+
+1.3 Backup y Carpetas
+
+copy index.html index.html.bak y creación de src/assets/lanyard
+
+Asegura la reversibilidad.
+
+1.4 Mover Imagen
+
+copy pagina/imagenes/carri.imagen.jpg lanyard-app/src/assets/lanyard/carri_card.png
+
+Personaliza el asset de la tarjeta 3D.
+
+FASE 2: ESCRITURA Y CORRECCIÓN DE CÓDIGO (Gemini VS Code)
+
+Se escribieron/corrigieron los archivos Lanyard.css, App.tsx, global.d.ts y Lanyard.tsx con el código del cubo 3D personalizado.
+
+Punto Crítico: La IA de VS Code resolvió una serie de errores de tipado de TypeScript/Meshline (TS2339, TS2749) mediante múltiples correcciones, incluyendo la eliminación de declare global de Lanyard.tsx y la corrección de tipos de useRef (RapierRigidBody).
+
+FASE 3: COMPILACIÓN FINAL E INTEGRACIÓN (CLI y VS Code)
+
+OBJETIVO
+
+COMANDO PRINCIPAL
+
+NOTAS
+
+3.1 Forzar Compilación
+
+npm run build
+
+Creó la carpeta dist con los archivos optimizados (JS/CSS).
+
+3.2 Integrar Iframe (index.html)
+
+Edición directa en index.html: Reemplaza la sección #lanyard-modal con el código del iframe.
+
+Esto enlaza tu página principal con el futuro contenido compilado.
+
+FASE 4: DESPLIEGUE FINAL (Manual en GitHub)
+
+Para que la simulación funcione, se deben seguir estos pasos de subida:
+
+Subir la App Compilada: El contenido COMPLETO de la carpeta lanyard-app/dist fue subido al servidor a una nueva subcarpeta llamada /lanyard.
+
+Subir el HTML Modificado: El archivo index.html (el que tiene el enlace final a /lanyard/) fue subido a la raíz del repositorio.
+
+ESTADO FINAL DEL ARCHIVO INDEX.HTML
+La sección del modal fue reemplazada con el siguiente iframe:
+
+<div id="lanyard-modal" class="modal"> 
+    <div class="modal-header"> 
+        <h3>Simulación Interactiva 3D (Cordón)</h3> 
+        <button class="close-modal-btn">×</button> 
+    </div> 
+    <div class="modal-body" style="padding: 0; display: block;"> 
+        <iframe id="lanyard-iframe" src="[https://carrilloangel.com/lanyard/](https://carrilloangel.com/lanyard/)" frameborder="0" allowfullscreen style="width: 100%; height: 100%; border: none; background-color: transparent;"> 
+        </iframe> 
+    </div> 
+</div>

@@ -1,0 +1,1 @@
+ import Lanyard from './Lanyard.tsx'; import './App.css'; function App() { return (<Lanyard />); } export default App;

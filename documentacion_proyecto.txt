@@ -1,0 +1,200 @@
+# DOCUMENTACIÓN DEL PROYECTO (GENERADA POR IA)
+
+---
+## 1. Diseño Principal y Variables CSS
+
+**Título/Función:** Definición de la estructura de color para Modo Oscuro (Default) y Modo Claro (light-mode).
+
+**Contexto/Razón:** Este bloque permite cambiar fácilmente el tema de la web (Dark/Light) alterando únicamente la clase 'light-mode' en el <body>. Se utilizan colores neón (verde neón para Dark, azul neón para Light) como acento. La mayoría de los componentes clave (texto, fondo, tarjeta, borde, sombra) se definen aquí, garantizando consistencia.
+
+**Código (Fragmento):**
+:root {
+    --bg-gradient: linear-gradient(135deg, #0d1117 0%, #170d0d 50%, #200f0f 100%);
+    --accent: #39ff14; /* VERDE NEÓN */
+}
+
+body.light-mode {
+    --bg-gradient: linear-gradient(135deg, #f6f8fa 0%, #e0e7ee 50%, #cce3f5 100%);
+    --accent: #00b8e6; /* AZUL NEÓN OSCURO */
+}
+
+**Notas Adicionales:** La funcionalidad de cambio de tema se implementa en la sección 3 del 'script.js' y utiliza los spans '#dark-span' y '#light-span' dentro del botón '#theme-toggle' para mostrar el modo actual.
+
+---
+## 2. Estructura y Estilos del Menú Lateral (Side-Menu)
+
+**Título/Función:** Estructura y comportamiento del menú de navegación lateral (colapsado/expandido) y manejo de modales.
+
+**Contexto/Razón:** Proporciona un menú de acceso rápido a funciones interactivas (Chat, Portafolio, Diseños) y a la simulación 3D (al hacer clic en la foto de perfil), separando estas funciones de la navegación principal (en el header). Utiliza 'backdrop-filter: blur(10px)' para un efecto "Glassmorphism" en el fondo.
+
+**Código (HTML):**
+<nav id="side-menu">
+    <button id="profile-btn" data-modal-target="#lanyard-modal">...</button>
+    <button id="pin-menu-btn" class="menu-item">...</button>
+    <button class="menu-item" data-modal-target="#chat-modal">...</button>
+</nav>
+
+**Código (CSS Destacado):**
+#side-menu {
+    width: 60px; /* Ancho colapsado */
+    backdrop-filter: blur(10px);
+    transition: width 0.3s ease;
+}
+
+#side-menu:hover, #side-menu.pinned {
+    width: 220px; /* Ancho expandido */
+}
+
+**Notas Adicionales:** La lógica para el anclaje ('pin') y la apertura de modales está controlada por la sección 2 del 'script.js'.
+
+---
+## 3. Lógica del Minijuego (Zombie Game) - 'script.js' Sección 1
+
+**Título/Función:** Implementación del minijuego interactivo tipo 'top-down shooter' en el fondo del portafolio.
+
+**Contexto/Razón:** Utiliza el elemento `<canvas id="zombie-canvas">` para dibujar un jugador y zombies. El juego se controla con las teclas **W, A, S, D** o flechas, y el disparo se activa con el clic del ratón. Permite a los usuarios interactuar con el fondo mientras navegan.
+
+**Funcionalidades Clave:**
+* **startGame()**: Inicializa variables (score=0, health=100) y comienza el ciclo de animación (`requestAnimationFrame(update)`).
+* **update()**: Bucle principal para movimiento del jugador, balas y zombies, detección de colisiones y manejo de la pérdida de vida.
+* **spawnZombie()**: Genera un zombie de forma aleatoria en el borde de la pantalla.
+* **Manejo de Game Over**: Muestra la capa `#game-over-overlay` si la salud llega a 0.
+
+**Dependencias HTML:**
+* `<canvas id="zombie-canvas">`
+* `<span id="score-value">`, `<span id="health-value">`
+* `<div id="game-over-overlay">` con botones `#restart-btn` y `#skip-btn`.
+
+---
+## 4. Lógica de Modales (Arrastrables) - 'script.js' Sección 2
+
+**Título/Función:** Control de las ventanas emergentes (modales) del menú lateral, incluyendo la capacidad de arrastrarlas.
+
+**Contexto/Razón:** Permite que los modales (Chat, Portafolio, etc.) se abran al hacer clic en los iconos del menú lateral (`[data-modal-target]`) y se cierren con el botón 'x' (`.close-modal-btn`).
+
+**Funcionalidades Clave:**
+* **openModal(modal)**: Muestra el modal, reinicia su posición a centrada y elimina el estado 'visible' de otros modales.
+* **closeModal(modal)**: Oculta el modal, aplicando la animación de desvanecimiento y escala.
+* **Arrastre (Drag)**: El evento `mousedown` en la cabecera (`.modal-header`) permite que el modal se mueva libremente en la pantalla, independientemente del centrado inicial.
+* **Lógica del Pin**: El botón `#pin-menu-btn` alterna la clase `pinned` en el menú lateral, haciéndolo permanecer expandido al retirar el ratón.
+
+---
+## 5. Lógica de Tema (Claro/Oscuro) - 'script.js' Sección 3
+
+**Título/Función:** Controla el cambio visual entre los temas definidos en CSS y mantiene la preferencia del usuario.
+
+**Contexto/Razón:** El botón `#theme-toggle` alterna la clase `light-mode` en el elemento `<body>`, lo que aplica las variables CSS correspondientes.
+
+**Funcionalidades Clave:**
+* **applyTheme(isLight)**: Función principal que añade/elimina la clase `light-mode` y utiliza `localStorage.setItem('theme', ...)` para guardar la preferencia.
+* **Visual Toggle**: Muestra u oculta los elementos internos `#dark-span` y `#light-span` para cambiar el texto del botón de tema.
+* **Persistencia**: Al cargar la página, se recupera el tema guardado en `localStorage` o se aplica 'dark' por defecto.
+
+---
+## 6. Lógica de Animación de QR - 'script.js' Sección 4
+
+**Título/Función:** Aplica una animación pulsante al contenedor del código QR.
+
+**Contexto/Razón:** Atrae la atención del usuario hacia el código QR de contacto mediante una animación de pulso neón, resaltando el borde y la sombra.
+
+**Funcionalidades Clave:**
+* **startQrPulse()**: Añade la clase `animating` al elemento `#qr-container`, lo que activa la animación CSS ` @keyframes qr-pulse`. La clase se elimina al finalizar la duración de la animación para permitir que se repita.
+* **Repetición**: La función se ejecuta en el evento `load` y se programa para repetirse cada **5000 milisegundos (5 segundos)** usando `setInterval()`.
+---
+## 7. Corrección de Sintaxis de Media Query
+
+**Título/Función:** Corrección de Sintaxis de Media Query en CSS.
+
+**Contexto/Razón:** Se detectó un error de sintaxis en la regla `@media` para dispositivos móviles. Una ruta de archivo local se había insertado accidentalmente en lugar de la directiva `@media`. Esta corrección restaura la funcionalidad de los estilos responsivos.
+
+**Código (Fragmento):**
+Línea incorrecta:
+`@AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\MediaDeviceSalts-journal (max-width: 768px) {`
+
+Línea corregida:
+`@media (max-width: 768px) {`
+
+**Notas Adicionales:** Este cambio es crítico para que los estilos definidos para pantallas de hasta 768px de ancho se apliquen correctamente.
+---
+## 8. Reversión de Código y Refactorización
+
+**Título/Función:** Reversión parcial del proyecto al estado del backup.
+
+**Contexto/Razón:** Se decidió revertir los cambios estructurales importantes (separación de JS, cambios de layout) para volver a una base de código anterior más estable. Se conservó únicamente la funcionalidad del "efecto neón" en el título, ya que era un cambio deseado.
+
+**Acciones Realizadas:**
+1.  El contenido de `index.html` fue restaurado a partir del archivo `BACKOP.txt`.
+2.  El archivo `script.js` fue eliminado, ya que la lógica de JavaScript volvió a estar contenida dentro de `index.html`.
+3.  Se re-implementó el efecto de neón para el título `<h1>` añadiendo la clase `.neon-text` y la animación `@keyframes flicker` directamente en el `<style>` de `index.html`.
+
+**Notas Adicionales:** Esta acción consolida el código funcional en un solo archivo nuevamente, a excepción de la documentación, que se seguirá manteniendo.
+---
+## 9. Refactorización para Móviles y Consolidación de Código
+
+**Título/Función:** Refactorización completa para mejorar la experiencia en móviles y consolidación de todo el código en un único archivo `index.html`.
+
+**Contexto/Razón:** La versión anterior no se visualizaba correctamente en dispositivos móviles. Esta actualización introduce un diseño "mobile-first" que oculta elementos complejos como el canvas del juego en pantallas pequeñas y reorganiza el layout para una mejor legibilidad. Además, todo el CSS y JavaScript, incluida la lógica del juego, se ha consolidado de nuevo en `index.html` para simplificar la gestión del proyecto.
+
+**Acciones Realizadas:**
+1.  Se reemplazó completamente el contenido de `index.html`.
+2.  **CSS:** Se añadió una media query (`@media screen and (max-width: 768px)`) para:
+    *   Ocultar el `<canvas>` del juego y la información de la partida (`.game-info`).
+    *   Ajustar el layout principal para que ocupe todo el ancho.
+    *   Convertir el menú lateral en una tarjeta superior para el toggle de tema.
+    *   Apilar los botones de navegación verticalmente.
+3.  **JavaScript:** Toda la lógica del juego y de la interfaz de usuario fue integrada en un bloque `<script>` al final del `<body>`.
+
+**Notas Adicionales:** Se corrigió un error persistente en la sintaxis de la media query durante esta actualización.
+---
+## 10. Segunda Reversión del Código
+
+**Título/Función:** Reversión de la refactorización para móviles.
+
+**Contexto/Razón:** La implementación del diseño "mobile-first" no fue satisfactoria y se decidió descartarla. Se ha vuelto al estado anterior, que consiste en el código original de un solo archivo (`BACKOP.txt`) con la adición del efecto de neón en el título, que es el único cambio que se ha decidido conservar de las últimas iteraciones.
+
+**Acciones Realizadas:**
+1.  Se restauró `index.html` por segunda vez, usando `BACKOP.txt` como base.
+2.  Se re-aplicó el efecto de neón al título `<h1>` y se re-insertó el CSS correspondiente (`.neon-text` y `@keyframes flicker`).
+3.  El proyecto vuelve a estar consolidado en un único archivo `index.html` con la lógica de JS y CSS incrustada.
+
+**Notas Adicionales:** Esta acción anula la refactorización descrita en la sección 9.
+---
+## 11. Ocultar Game Over en Pantallas Pequeñas
+
+**Título/Función:** Añadir regla CSS para ocultar la superposición de "Game Over" en pantallas pequeñas.
+
+**Contexto/Razón:** Para mejorar la experiencia en dispositivos móviles, la pantalla de "Game Over" que aparece al final del minijuego se oculta en pantallas con un ancho máximo de 599px. Esto evita que un elemento grande e interactivo domine la vista en pantallas pequeñas.
+
+**Código (CSS):**
+@media (max-width: 599px) {
+  .game-over-overlay.active {
+    display: none;
+  }
+}
+
+**Notas Adicionales:** Este cambio se aplicó directamente en la sección `<style>` del archivo `index.html`.
+---
+## 12. Restauración de Estilos de Navegación Móvil
+
+**Título/Función:** Reemplazo de los estilos de la barra de navegación inferior en la vista móvil.
+
+**Contexto/Razón:** Se restauró un conjunto de reglas CSS preferido estéticamente para la barra de navegación en dispositivos móviles (pantallas con un ancho máximo de 768px). El bloque de estilos anterior, que usaba `!important` excesivamente, fue eliminado y reemplazado por una versión más limpia y con el espaciado deseado.
+
+**Acciones Realizadas:**
+1.  Se localizó el bloque `@media (max-width: 768px)`.
+2.  Se eliminó el bloque de CSS que comenzaba con `/* --- ESTILOS BARRA INFERIOR MÓVIL --- */`.
+3.  Se insertó un nuevo bloque de CSS, `/* --- ESTILOS BARRA INFERIOR MÓVIL (Versión Deseada) --- */`, con las reglas de estilo correctas para el diseño de la barra de navegación móvil.
+
+**Notas Adicionales:** Este cambio restaura la apariencia visual preferida de la barra de navegación en móviles, asegurando un espaciado y alineación correctos de los iconos.
+---
+## 13. Corrección Final de Sintaxis CSS
+
+**Título/Función:** Corrección manual de la ubicación de un bloque de CSS.
+
+**Contexto/Razón:** Se detectó un error de sintaxis persistente donde el bloque de estilos para la barra de navegación móvil (`/* --- INICIO: ESTILOS BARRA INFERIOR MÓVIL (CORRECTO) --- */`) estaba incorrectamente ubicado fuera de la regla `@media (max-width: 768px)`. Esto impedía que los estilos se aplicaran correctamente en dispositivos móviles.
+
+**Acciones Realizadas:**
+1.  Se identificó el bloque de CSS mal ubicado.
+2.  Se "cortó" y "pegó" el bloque completo para que quedara dentro de las llaves de la regla `@media (max-width: 768px)`, justo antes de su cierre.
+
+**Notas Adicionales:** Esta fue una corrección manual y precisa para resolver el problema de sintaxis de forma definitiva.

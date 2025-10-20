@@ -1,0 +1,869 @@
+
+        /* ================================================= */
+        /* === 1. VARIABLES DE TEMA (CLARO: AZUL/BLANCO, OSCURO: ROJO/NEGRO) === */
+        /* ================================================= */
+        /* Tema Oscuro (DEFAULT) */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0d1117 0%, #170d0d 50%, #200f0f 100%);
+            --bg: #0d1117;
+            --card: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --secondary-text: #8b949e;
+            --accent: #39ff14; /* VERDE NEÓN */
+            --accent-hover: #6bff6b;
+            --success: #2ea043;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+            --font-main: 'Inter', sans-serif;
+            --toggle-bg: #e74c3c;
+            --toggle-text: white;
+            --text-background: rgba(13, 17, 23, 0.9);
+            --name-color: white;
+            --social-icon: #e6edf3;
+            --card-rgba: 22, 27, 34; /* Para el efecto glass */
+            --expo-in: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+        }
+        /* Tema Claro (REQUISITO: Azul/Blanco) */
+        body.light-mode {
+            --bg-gradient: linear-gradient(135deg, #f6f8fa 0%, #e0e7ee 50%, #cce3f5 100%);
+            --bg: #f6f8fa;
+            --card: #ffffff;
+            --border: #d0d7de;
+            --text: #24292f;
+            --secondary-text: #57606a;
+            --accent: #00b8e6; /* AZUL NEÓN OSCURO */
+            --accent-hover: #33ccff;
+            --success: #2c974b;
+            --shadow: 0 1px 3px rgba(27, 31, 35, 0.15);
+            --toggle-bg: #0969da;
+            --toggle-text: white;
+            --text-background: rgba(246, 248, 250, 0.9);
+            --name-color: black;
+            --social-icon: #24292f;
+            --card-rgba: 255, 255, 255; /* Para el efecto glass */
+        }
+        /* ================================================= */
+        /* === 2. ESTILOS BASE Y JUEGO === */
+        /* ================================================= */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: var(--font-main);
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s, padding-left 0.3s ease;
+            overflow-x: hidden;
+            position: relative;
+            padding-left: 60px; /* Espacio para el nuevo menú lateral colapsado */
+        }
+        #zombie-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: transparent;
+            border: none;
+            touch-action: none;
+        }
+        .game-container {
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin: -1.5rem auto 1.5rem auto;
+            position: relative;
+            z-index: 10;
+        }
+        header, main, footer {
+            position: relative;
+            z-index: 10;
+        }
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            box-shadow: var(--shadow);
+            flex-direction: column;
+            background-color: var(--bg);
+            background-image: url('../imagenes/imagesbanner-dark.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        body.light-mode header {
+            background-image: url('../imagenes/imagesbanner-light.png');
+        }
+        .header-info {
+            max-width: 100%;
+            flex-grow: 1;
+            text-align: center;
+            order: 2;
+            width: 100%;
+            background-color: rgba(var(--card-rgba), 0.5);
+            backdrop-filter: blur(5px);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        header h1 {
+            margin: 0 0 0.2rem;
+            font-size: 2rem;
+            color: var(--name-color);
+            font-weight: 700;
+        }
+        header p {
+            color: var(--secondary-text);
+            margin: 0.3rem 0 1.5rem;
+            font-size: 1.1rem;
+        }
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            scroll-behavior: smooth;
+        }
+        nav a:hover {
+            background-color: var(--border);
+            transform: scale(1.02);
+            color: var(--accent-hover);
+        }
+        /* Estilos para el contenedor del botón de tema. Se mantiene simple para posicionamiento. */
+        .theme-toggle-container {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* Estilos base para el botón de tema (#theme-toggle). Aplica por defecto en Tema Oscuro. */
+        #theme-toggle {
+            width: 48px; 
+            height: 48px; 
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.4rem;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            transition: all 0.3s ease;
+            line-height: 0;
+            background-color: var(--card); 
+            color: var(--accent); 
+            border: 3px solid var(--accent);
+            box-shadow: 
+                0 0 10px var(--accent), 
+                0 0 20px var(--accent), 
+                0 0 30px rgba(var(--card-rgba), 0.7);
+        }
+        /* Oculta las etiquetas de texto dentro del botón de tema */
+        #theme-toggle span {
+            display: none !important;
+        }
+        #theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-hover);
+            box-shadow: 
+                0 0 15px var(--accent-hover), 
+                0 0 30px var(--accent-hover), 
+                0 0 40px var(--accent);
+        }
+        body.light-mode #theme-toggle {
+            border: 3px solid var(--accent);
+            box-shadow: 
+                0 0 5px var(--accent), 
+                0 0 10px var(--accent);
+        }
+        .hidden {
+            display: none !important;
+        }
+        #theme-toggle i {
+            font-size: 1.4rem;
+            color: var(--text);
+            line-height: 1;
+        }
+        #theme-toggle .fa-moon {
+            display: block !important;
+        }
+        #theme-toggle .fa-sun {
+            display: none !important;
+        }
+        body.light-mode #theme-toggle .fa-moon {
+            display: none !important;
+        }
+        body.light-mode #theme-toggle .fa-sun {
+            display: block !important;
+        }
+        .game-info {
+            font-size: 0.8em;
+            color: var(--accent);
+            background-color: var(--card);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: 600;
+            border: 1px solid var(--border);
+        }
+        /* Estilos para el overlay de Game Over */
+        .game-over-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .game-over-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .game-over-overlay h2 {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            border-bottom: none;
+            text-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
+        }
+        .game-over-overlay h2::before {
+            content: none;
+        }
+        .game-over-overlay p {
+            font-size: 20px;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+        .game-over-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .game-over-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: background-color 0.2s, transform 0.1s, border-color 0.2s;
+        }
+        #restart-btn {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        #restart-btn:hover {
+            background-color: var(--accent-hover);
+            transform: scale(1.05);
+        }
+        #skip-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid var(--border);
+        }
+        #skip-btn:hover {
+            background-color: var(--border);
+            transform: scale(1.05);
+        }
+        main {
+            width: 90%;
+            max-width: 900px;
+            background: var(--text-background);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        section {
+            padding: 1rem 0;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        h2::before {
+            content: "#";
+            color: var(--accent);
+            font-size: 1.2em;
+            margin-right: 0.5rem;
+        }
+        section p, section li {
+            color: var(--secondary-text);
+        }
+        .job-entry {
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .job-entry h3 {
+            margin: 0 0 0.2rem;
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+        .job-entry p.date {
+            margin: 0 0 0.5rem;
+            font-size: 0.9em;
+            color: var(--secondary-text);
+        }
+        .job-entry ul {
+            list-style: disc;
+            padding-left: 1.2rem;
+            color: var(--secondary-text);
+        }
+        .job-entry li strong {
+            color: var(--text);
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .skill-item-detailed {
+            background-color: var(--border);
+            color: var(--text);
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-align: center;
+        }
+        .skill-item-detailed span {
+            color: var(--success);
+            font-weight: 700;
+            display: block;
+        }
+        footer {
+            color: var(--secondary-text);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            margin-top: auto;
+            background-color: var(--text-background);
+            width: 100%;
+            padding: 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .social-icons {
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 15px;
+        }
+        .social-icons a {
+            color: var(--social-icon);
+            font-size: 1.5rem;
+            transition: color 0.2s;
+        }
+        .social-icons a:hover {
+            color: var(--accent);
+        }
+        #qr-container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            margin: 2rem auto 1rem;
+            z-index: 10;
+        }
+        #qr-container img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            border: 3px solid var(--accent);
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 0 15px rgba(var(--card-rgba), 0.7);
+        }
+        #qr-container a:hover img {
+            transform: scale(1.05);
+            border-color: var(--accent-hover);
+            box-shadow: 0 0 20px 5px var(--accent);
+        }
+        @keyframes qr-pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(var(--card-rgba), 0.7);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 25px 10px var(--accent);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(var(--card-rgba), 0.7);
+            }
+        }
+        #qr-container.animating img {
+            animation: qr-pulse 1.2s ease-in-out;
+        }
+        body.light-mode #qr-container img {
+            box-shadow: 0 0 15px var(--accent);
+        }
+        #qr-container a {
+            position: relative;
+            display: inline-block;
+        }
+        body.light-mode #qr-container a::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--accent);
+            mix-blend-mode: screen;
+            opacity: 0.9;
+            pointer-events: none;
+            border-radius: 8px;
+        }
+        /* ================================================= */
+        /* === 3. NUEVO MENÚ LATERAL Y CHAT MODAL === */
+        /* ================================================= */
+        #side-menu {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 60px;
+            background-color: rgba(var(--card-rgba), 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 0.5rem; 
+            z-index: 1100;
+            transition: width 0.3s ease, background-color 0.3s, border-color 0.3s;
+            overflow: hidden;
+        }
+        #side-menu:hover, #side-menu.pinned {
+            width: 220px;
+        }
+        #side-menu.pinned {
+            box-shadow: var(--shadow);
+        }
+        .menu-item {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            text-decoration: none;
+            gap: 1.5rem;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+        .menu-item:hover {
+            color: var(--accent);
+            background-color: rgba(var(--card-rgba), 0.8);
+        }
+        .menu-item .icon {
+            font-size: 1.5rem;
+            width: 28px;
+            text-align: center;
+        }
+        .menu-item .tooltip {
+            font-size: 1rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease 0.1s;
+        }
+        #side-menu:hover .tooltip, #side-menu.pinned .tooltip {
+            opacity: 1;
+        }
+        #pin-menu-btn {
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+        }
+        #pin-menu-btn.pinned {
+            color: var(--accent);
+        }
+        .menu-separator {
+            width: 80%;
+            height: 1px;
+            background-color: var(--border);
+            margin: 0.5rem 0;
+        }
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%;
+            background-color: rgba(var(--card-rgba), 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            z-index: 1200;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        }
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: move;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text);
+        }
+        .close-modal-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .close-modal-btn:hover {
+            color: var(--accent);
+            transform: rotate(90deg);
+        }
+        .modal-body {
+            flex-grow: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--secondary-text);
+            position: relative;
+        }
+        .modal-body .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        .modal-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        #chat-modal {
+            max-width: 400px;
+            height: 600px;
+            /* height: 600px; */ /* Eliminado para permitir ajuste automático */
+            height: auto; 
+            max-height: 90vh; /* Limita la altura máxima al 90% del viewport */
+        }
+        .chat-input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--card);
+            color: var(--text);
+            font-family: var(--font-main);
+        }
+        .chat-input::placeholder {
+            color: var(--secondary-text);
+        }
+        .gallery-modal {
+            max-width: 80vw;
+            max-height: 80vh;
+            width: 1200px;
+            height: 700px;
+        }
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(var(--card-rgba), 0.8);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 2rem;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .nav-arrow:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+        .nav-arrow.left {
+            left: 1.5rem;
+        }
+        .nav-arrow.right {
+            right: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+                padding-bottom: 80px;
+            }
+            header {
+                padding: 2rem 1rem;
+            }
+            .header-info {
+                padding: 1rem;
+            }
+            main {
+                width: 95%;
+                /* Reducimos el padding en móvil para que no se pegue a los bordes */
+                padding: 1rem;
+            }
+            nav {
+                justify-content: center;
+            }
+            #qr-container {
+                margin: 1rem auto;
+            }
+            /* Ajustamos el tamaño del nombre para que no sea tan grande */
+            header h1 {
+                font-size: 1.8rem;
+            }
+            /* Hacemos que el contenedor de botones (nav) se comporte como una columna */
+            nav {
+                flex-direction: column; /* Apilamos los botones verticalmente */
+                width: 100%; /* Hacemos que ocupe todo el ancho del cuadro */
+                align-items: stretch; /* Estiramos los botones */
+            }
+            /* Centramos el texto de cada botón */
+            nav a {
+                text-align: center;
+            }
+            .game-container {
+                flex-direction: column; /* Apilamos la puntuación y las instrucciones */
+                align-items: center;  /* Centramos todo */
+                display: none;
+                gap: 0.5rem;          /* Reducimos el espacio entre ellos */
+                text-align: center;   /* Centramos el texto de las instrucciones */
+            }
+            .game-info {
+                font-size: 0.75em;
+            }
+            /* --- INICIO: ESTILOS BARRA INFERIOR MÓVIL --- */
+            #side-menu, #side-menu:hover, #side-menu.pinned {
+                top: auto;
+                bottom: 0;
+                left: 0;
+                width: 100vw;
+                height: 80px;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 0 0.5rem; /* Añadimos un poco de padding horizontal */
+                padding-top: 0;
+                border-right: none;
+                border-top: 1px solid var(--border);
+                overflow: visible;
+                position: fixed;
+                z-index: 1100;
+                background-color: rgba(var(--card-rgba), 0.85);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                align-items: center; /* Centramos verticalmente los items */
+            }
+            /* Ocultar elementos no deseados en móvil */
+            #pin-menu-btn, .menu-separator, .menu-item .tooltip {
+                display: none !important;
+            }
+            /* Estilos para CADA botón, incluido el de perfil */
+            #side-menu > button { /* Seleccionamos solo los botones hijos directos */
+                flex-basis: 0; /* Base flexible 0 para que crezcan igual */
+                flex-grow: 1;  /* Permitimos que crezcan para llenar espacio */
+                display: flex; /* Usamos flex para centrar el contenido del botón */
+                flex-direction: column; /* Apilamos icono y texto (aunque el texto no se vea) */
+                justify-content: center; /* Centramos verticalmente */
+                align-items: center;    /* Centramos horizontalmente */
+                padding: 0.5rem 0.2rem; /* Padding vertical y un poco horizontal */
+                height: 100%; /* Ocupar toda la altura de la barra */
+                gap: 2px; /* Espacio mínimo por si acaso */
+                background: none;
+                border: none;
+                color: var(--secondary-text);
+                transition: color 0.2s ease;
+            }
+            #side-menu > button:hover {
+                color: var(--accent);
+            }
+            /* Estilos específicos para el botón de perfil en móvil */
+            #profile-btn {
+                order: 2; /* Movemos el botón de perfil al centro (1, 2, 3...) */
+                flex-grow: 0; /* No queremos que el botón de perfil crezca más que los otros */
+                width: 60px !important; /* Forzamos un tamaño específico más grande */
+                height: 60px !important;
+                margin-top: -20px; /* Lo subimos un poco para que sobresalga */
+                border-radius: 50%;
+                border: 3px solid var(--accent); /* Mantenemos el borde */
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.4); /* Sombra para destacar */
+                z-index: 1; /* Asegurar que esté por encima de la barra */
+                padding: 0 !important; /* Quitamos padding interno */
+                background-color: var(--card); /* Tapa la línea de la barra */
+            }
+            #profile-btn img {
+                width: 100%;
+                height: 100%;
+            }
+            /* Estilos para los iconos normales (NO el de perfil) */
+            .menu-item .icon {
+                font-size: 1.6rem; /* Ajustamos tamaño de iconos normales */
+                line-height: 1;
+                width: auto;
+            }
+            /* Asignamos orden a los demás botones para que queden alrededor */
+            .menu-item[data-modal-target="#chat-modal"] { order: 1; }
+            .menu-item[data-modal-target="#portfolio-modal"] { order: 1; }
+            .menu-item[data-modal-target="#pages-modal"] { order: 3; }
+            .menu-item[data-modal-target="#designs-modal"] { order: 3; }
+            /* --- FIN: ESTILOS BARRA INFERIOR MÓVIL --- */
+        }
+        #profile-btn {
+            padding: 0;
+            margin-bottom: 0.5rem; 
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            background-color: var(--card);
+            border: 3px solid var(--accent);
+            overflow: hidden;
+            cursor: pointer;
+            flex-shrink: 0; 
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        #profile-btn:hover {
+            transform: scale(1.08); 
+            border-color: var(--accent-hover);
+        }
+        #side-menu:hover #profile-btn,
+        #side-menu.pinned #profile-btn {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+        #profile-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        #lanyard-modal {
+            max-width: 90vw;
+            width: 800px; 
+            height: 600px; 
+        }
+        #lanyard-modal .modal-body {
+            padding: 0;
+            display: block; 
+        }
+        #lanyard-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: transparent;
+        }
+        .cta-button {
+            background-color: var(--accent);
+            color: var(--card);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 10px rgba(var(--card-rgba), 0.5); 
+        }
+        .cta-button:hover {
+            background-color: var(--accent-hover);
+            color: black; 
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 15px var(--accent);
+        }
+
+/* Ocultar el Game Over en pantallas pequeñas */
+@media (max-width: 599px) {
+  .game-over-overlay.active {
+    display: none;
+  }
+}
+
+/* ================================================= */
+/* === AJUSTE UX/UI PARA MODAL DE GAFETE EN MÓVIL === */
+/* ================================================= */
+@media (max-width: 768px) {
+    #lanyard-modal {
+        /* Fuerza la adaptabilidad en pantallas pequeñas */
+        width: 95vw !important;
+        height: 85vh !important;
+        max-width: 95vw !important;
+        max-height: 85vh !important;
+    }
+}
+
+#lanyard-modal .modal-body {
+    padding: 0; /* Asegura que no haya padding extra */
+    display: flex; /* Fuerza el uso de Flexbox */
+    flex-direction: column; /* Apila el contenido verticalmente */
+    flex-grow: 1; /* Permite que el modal-body use todo el espacio restante */
+    overflow: hidden; /* Oculta cualquier desbordamiento para prevenir scroll */
+}
+    

@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unknown-property */
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Canvas, useFrame, extend } from '@react-three/fiber'; 
-import { useTexture, Environment, Lightformer } from '@react-three/drei'; 
+import { Canvas, useFrame, extend } from '@react-three/fiber';
+import { useTexture, Environment, Lightformer } from '@react-three/drei';
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint, RapierRigidBody } from '@react-three/rapier';
-import { MeshLineGeometry, MeshLineMaterial } from 'meshline'; 
-import cardTexture from './assets/lanyard/carri_card.png'; 
+import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
+import cardTexture from './assets/lanyard/fotogafet.jpg';
 import * as THREE from 'three';
 import './Lanyard.css';
 
@@ -22,18 +22,19 @@ interface LanyardProps {
   position?: [number, number, number];
   gravity?: [number, number, number];
   fov?: number;
-  transparent?: boolean;
 }
 
-export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0], fov = 20, transparent = true }: LanyardProps) {
+export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0], fov = 20 }: LanyardProps) {
   return (
-    <div className="lanyard-wrapper">
+    <div className="lanyard-wrapper" style={{ width: '100%', height: '100%' }}>
       <Canvas
         camera={{ position: position, fov: fov }}
-        gl={{ alpha: transparent }}
-        onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
+        gl={{ alpha: true }}
+        flat={true}
       >
-        <ambientLight intensity={Math.PI} />
+        <color attach="background" args={['#0A0A0A']} />
+        <ambientLight intensity={0.1} />
+        <spotLight color="#39ff14" intensity={10} position={[5, 5, 5]} angle={0.6} penumbra={1} castShadow />
         <Physics gravity={gravity as [number, number, number]} timeStep={1 / 60}>
           <Band />
         </Physics>
@@ -146,7 +147,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
             }}
           >
             <boxGeometry args={[1, 1, 1]} />
-            <meshPhysicalMaterial map={mapTexture} map-anisotropy={16} clearcoat={1} clearcoatRoughness={0.15} roughness={0.9} metalness={0.8} />
+            <meshPhysicalMaterial map={mapTexture} map-anisotropy={16} clearcoat={1} clearcoatRoughness={0.15} roughness={0.2} metalness={0.8} />
           </mesh>
         </RigidBody>
       </group>

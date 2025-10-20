@@ -1,3 +1,10 @@
+body, #root, #root > div {
+  background-color: transparent !important;
+  /* La altura debe ser 100% para que el Canvas la herede, asegurando que no haya scrollbar interno innecesario. */
+  height: 100%;
+  width: 100%;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -65,4 +72,12 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}/* === FIX DE TRANSPARENCIA FORZADA (FINAL) === */
+/* Esta regla anula el fondo blanco/gris que Vite o el navegador aplican en la aplicación 3D. */
+body, html {
+    background-color: transparent !important;
+}
+
+#root {
+    background-color: transparent !important;
 }

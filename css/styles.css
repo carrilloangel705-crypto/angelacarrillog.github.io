@@ -536,10 +536,8 @@
             left: 50%;
             transform: translate(-50%, -50%) scale(0.9);
             width: 90%;
-            background-color: rgba(var(--card-rgba), 0.7);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border);
+            background-color: var(--bg); /* Negro sólido del tema oscuro */
+            border: 1px solid #000;
             border-radius: 12px;
             z-index: 1200;
             box-shadow: var(--shadow);

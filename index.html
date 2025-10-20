@@ -26,7 +26,7 @@
 </div>
     <nav id="side-menu">
     <button id="profile-btn" data-modal-target="#lanyard-modal">
-        <img src="imagenes/carri.imagen.jpg" alt="Foto de Perfil de Angel Carrillo">
+        <img src="imagenes/fotogafet.jpg" alt="Foto Formal de Angel Carrillo">
     </button>
     <button id="pin-menu-btn" class="menu-item">
         <span class="icon"><i class="fa-solid fa-thumbtack"></i></span>
@@ -111,16 +111,23 @@
             <button class="nav-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-    <div id="lanyard-modal" class="modal">
-        <div class="modal-header">
-            <h3>Simulación Interactiva 3D (Cordón)</h3>
-            <button class="close-modal-btn">&times;</button>
-        </div>
-        <div class="modal-body">
-            <iframe id="lanyard-iframe" data-src="https://carrilloangel.com/lanyard/" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="strict-origin-when-cross-origin" frameborder="0" allowfullscreen style="width: 100%; height: 100%; border: none; background-color: transparent;">
-            </iframe>
+<div id='lanyard-modal' class='modal'>
+    <div class='modal-header'>
+        <h3>Simulación Interactiva 3D (Cordón)</h3>
+        <button class='close-modal-btn'>&times;</button>
+    </div>
+    <div class='modal-body'>
+        <div style='text-align: center; padding: 50px;'>
+            <i class='fa-solid fa-code-branch' style='font-size: 3rem; color: var(--accent); margin-bottom: 1rem;'></i>
+            <p style='color: var(--secondary-text); margin: 0;'>
+                <strong>El Lanyard 3D está refactorizado en la rama 'refactor-base'.</strong>
+            </p>
+            <p style='color: var(--secondary-text);'>
+                Esta funcionalidad se activará al hacer 'merge' en el servidor.
+            </p>
         </div>
     </div>
+</div>
     <canvas id="zombie-canvas"></canvas>
     <div id="game-over-overlay" class="game-over-overlay">
         <h2 id="game-over-text"> GAME OVER </h2>

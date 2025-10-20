@@ -40,3 +40,16 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Selector para forzar la transparencia en el contenedor de React/Canvas */
+.LanyardContainer, .LanyardWrapper {
+    background-color: transparent !important;
+}
+
+body {
+    background-color: transparent !important;
+}
+
+#root {
+    background-color: transparent !important;
+}

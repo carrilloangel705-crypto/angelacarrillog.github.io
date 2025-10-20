@@ -88,17 +88,6 @@
                 if (targetModal) {
                     closeAllModals();
                     targetModal.classList.add('visible');
-
-                    if (targetModal.id === 'lanyard-modal') {
-                        const iframe = document.getElementById('lanyard-iframe');
-                        const lazySrc = iframe.getAttribute('data-src');
-                        
-                        // Solo cargamos si el src está vacío
-                        if (!iframe.src && lazySrc) {
-                            iframe.src = lazySrc;
-                            console.log('Cargando contenido 3D del lanyard...');
-                        }
-                    }
                 }
             });
         });
@@ -127,6 +116,8 @@
             const header = modal.querySelector('.modal-header');
             let isDragging = false;
             let initialX, initialY, offsetX, offsetY;
+
+            if (!header) return; // Si no hay header, no se puede arrastrar.
 
             header.addEventListener('mousedown', (e) => {
                 isDragging = true;
@@ -159,10 +150,10 @@
         });
     }
 
-    // Ejecutar la inicialización del juego y del menú
-    window.onload = function() {
-        initGame();
+    // Ejecutar la inicialización del menú y modales cuando el DOM esté listo.
+    document.addEventListener('DOMContentLoaded', function() {
         initSideMenuAndModals();
         initDraggableModals();
-    };
+        // La inicialización del juego (initGame) se mantiene en su propio script si es necesario.
+    });
 })();

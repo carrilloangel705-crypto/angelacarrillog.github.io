@@ -5,7 +5,6 @@ import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { useTexture, Environment, Lightformer } from '@react-three/drei';
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint, RapierRigidBody } from '@react-three/rapier';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
-import cardTexture from './assets/lanyard/fotogafet.jpg';
 import * as THREE from 'three';
 import './Lanyard.css';
 
@@ -29,7 +28,6 @@ export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0], 
     <div className="lanyard-wrapper" style={{ width: '100%', height: '100%' }}>
       <Canvas
         camera={{ position: position, fov: fov }}
-        gl={{ alpha: true }}
         flat={true}
       >
         <color attach="background" args={['#0A0A0A']} />
@@ -59,7 +57,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }) {
 
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
   const segmentProps = { type: 'dynamic' as const, canSleep: true, angularDamping: 4, linearDamping: 4 };
-  const mapTexture = useTexture(cardTexture as string);
+  const mapTexture = useTexture('./assets/lanyard/fotogafet.jpg?v=' + new Date().getTime());
   const lanyardMaterial = new THREE.Texture();
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
   const [dragged, drag] = useState<THREE.Vector3 | null>(null);
